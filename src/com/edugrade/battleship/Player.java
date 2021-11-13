@@ -3,10 +3,12 @@ package com.edugrade.battleship;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Random;
 
 public class Player {
     private static GameMap map = new GameMap();
     private static Scanner scanner = new Scanner(System.in);
+    private static Random random = new Random();
 
     private ArrayList<Boats> fleet;
 
@@ -105,39 +107,133 @@ public class Player {
             }
         }
     }
+    /**
+     * Randomize a shot
+     * returns string Y + X  (A-J + 1-10)
+     * @author Almen Novalic
+     * */
+    public String shoot(){
 
-    public int[] shoot(){
-        int[] shot = new int[2];
-        System.out.print("Skriv in y-koordinat: ");
-        shot[0] = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Skriv in en x-koordinat: ");
-        shot[1] = scanner.nextInt();
-        scanner.nextLine();
-        return shot;
+        String shotY = "";
+        String shotX = "";
+        int shot;
+
+        shot = random.nextInt(9) + 0;
+        shotY = String.valueOf(shot);
+
+        shot = random.nextInt(9) + 0;
+        if (shot == 0){shotX = "a";}
+        else if (shot == 1){shotX = "b";}
+        else if (shot == 2){shotX = "c";}
+        else if (shot == 3){shotX = "d";}
+        else if (shot == 4){shotX = "e";}
+        else if (shot == 5){shotX = "f";}
+        else if (shot == 6){shotX = "g";}
+        else if (shot == 7){shotX = "h";}
+        else if (shot == 8){shotX = "i";}
+        else if (shot == 9){shotX = "j";}
+
+        return shotY + shotX;
+
     }
 
+
+    /**
+     * Sets opponents shot on out maps, returns hit or miss
+     * @author Almen Novalic
+     * */
     public String getShot(int[] shots) {
 
         String value = map.getIndexValue(shots[0], shots[1]);
+        String value2 = "";
 
         if (value.equals("@")) {
             map.setIndexValue("$", shots[0], shots[1]);
+            value2 = "h";
         } else {
             map.setIndexValue("X", shots[0], shots[1]);
+            value2 = "m";
         }
-        return value;
+        return value2;
     }
 
-    public void checkHit(int[] shots) {
+
+    /**
+     * Check if opponent has hit us.
+     * Returns h or m.
+     * @author Almen Novalic
+     * */
+    public String checkHit(int[] shots) {
         String value = map.getIndexValue(shots[0], shots[1]);
 
         if (value.equals("$")) {
-            System.out.println("Datorn träffade!");
+            return "h";
         } else {
-            System.out.println("Datorn missade!");
+            return "m";
         }
     }
+
+
+    /**
+     * Check if we made a hit on opponent ship.
+     * Returns h or m.
+     * @author Almen Novalic
+     * */
+    public String checkIfWeHitOpponent(String inputString) {
+
+        String result = inputString.substring(0,1);
+        return result;
+    }
+
+    /**
+     * Converts opponent string to Shot
+     * Returns int array
+     * @author Almen Novalic
+     * */
+    public int[] convertOpponentShot(String inputString) {
+
+        int a[] = {0,0};
+        int b = 0;
+        String string = inputString.substring(8,9);
+
+        if (string.equals("a")){b = 0;}
+        else if(string.equals("b")){b = 1;}
+        else if (string.equals("c")){b = 2;}
+        else if (string.equals("d")){b = 3;}
+        else if (string.equals("e")){b = 4;}
+        else if (string.equals("f")){b = 5;}
+        else if (string.equals("g")){b = 6;}
+        else if (string.equals("h")){b = 7;}
+        else if (string.equals("i")){b = 8;}
+        else if (string.equals("j")){b = 9;}
+
+        int c = Integer.parseInt(inputString.substring(7,8));
+
+        a[0] = b;
+        a[1] = c;
+
+        return a;
+
+    }
+
+    /**
+     * Builds message to opponent
+     * input array, needs returnvalue for hit or miss
+     * and coordinates for a new shot
+     * @author Almen Novalic
+     * */
+    public String buildMessageToOpponent(String[] inputString ){
+
+        String s = "";
+
+        s = inputString[0] + " shoots " + inputString[1];
+
+        return s;
+
+
+    }
+
+
 
     public void placeBoats(){
 
