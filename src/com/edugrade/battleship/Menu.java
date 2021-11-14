@@ -44,11 +44,11 @@ public class Menu {
         while (true) {
             // Spelaren börjar skjuta
             System.out.println("Omgång: " + rounds);
-            int[] playerShots = player.shoot();
-            computer.getShot(playerShots);
+            //String playerShots = player.shoot();
+            //computer.getShot(playerShots);
             System.out.println("Datorns spelplan");
             computer.printComputerMap();
-            computer.checkHit(playerShots);
+            //computer.checkHit(playerShots);
 
             // Datorn skjuter tillbaka
             int[] computerShots = computer.shoot();
