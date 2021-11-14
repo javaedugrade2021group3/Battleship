@@ -5,7 +5,7 @@ public class Main {
     private static Player testPlayer = new Player(); // Test objekt
 
     public static void main(String[] args) {
-        //Menu.mainMenu();
+        Menu.mainMenu();
 
         /**
          * Testar Båtobjekten.
