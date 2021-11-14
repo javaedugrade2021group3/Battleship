@@ -6,14 +6,16 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class Player {
-    private static GameMap map = new GameMap();
+
     private static Scanner scanner = new Scanner(System.in);
     private static Random random = new Random();
 
     private ArrayList<Boats> fleet;
+    private GameMap map;
 
     public Player() {
         this.fleet = new ArrayList<>();
+        this.map = new GameMap();
     }
 
     /**
@@ -75,34 +77,34 @@ public class Player {
             number = Integer.parseInt(location.get(i).substring(1));
             switch (letter) {
                 case "A":
-                    map.setIndexValue("@", 1, number+1);
+                    this.map.setIndexValue("@", 1, number+1);
                     break;
                 case "B":
-                    map.setIndexValue("@", 2, number+1);
+                    this.map.setIndexValue("@", 2, number+1);
                     break;
                 case "C":
-                    map.setIndexValue("@", 3, number+1);
+                    this.map.setIndexValue("@", 3, number+1);
                     break;
                 case "D":
-                    map.setIndexValue("@", 4, number+1);
+                    this.map.setIndexValue("@", 4, number+1);
                     break;
                 case "E":
-                    map.setIndexValue("@", 5, number+1);
+                    this.map.setIndexValue("@", 5, number+1);
                     break;
                 case "F":
-                    map.setIndexValue("@", 6, number+1);
+                    this.map.setIndexValue("@", 6, number+1);
                     break;
                 case "G":
-                    map.setIndexValue("@", 7, number+1);
+                    this.map.setIndexValue("@", 7, number+1);
                     break;
                 case "H":
-                    map.setIndexValue("@", 8, number+1);
+                    this.map.setIndexValue("@", 8, number+1);
                     break;
                 case "I":
-                    map.setIndexValue("@", 9, number+1);
+                    this.map.setIndexValue("@", 9, number+1);
                     break;
                 case "J":
-                    map.setIndexValue("@", 10, number+1);
+                    this.map.setIndexValue("@", 10, number+1);
                     break;
             }
         }
@@ -144,14 +146,14 @@ public class Player {
      * */
     public String getShot(int[] shots) {
 
-        String value = map.getIndexValue(shots[0], shots[1]);
+        String value = this.map.getIndexValue(shots[0], shots[1]);
         String value2 = "";
 
         if (value.equals("@")) {
-            map.setIndexValue("$", shots[0], shots[1]);
+            this.map.setIndexValue("$", shots[0], shots[1]);
             value2 = "h";
         } else {
-            map.setIndexValue("X", shots[0], shots[1]);
+            this.map.setIndexValue("X", shots[0], shots[1]);
             value2 = "m";
         }
         return value2;
@@ -164,7 +166,7 @@ public class Player {
      * @author Almen Novalic
      * */
     public String checkHit(int[] shots) {
-        String value = map.getIndexValue(shots[0], shots[1]);
+        String value = this.map.getIndexValue(shots[0], shots[1]);
 
         if (value.equals("$")) {
             return "h";
@@ -231,7 +233,7 @@ public class Player {
 
         String s = "";
 
-        s = inputString[0] + " shoots " + inputString[1];
+        s = inputString[0] + " shot " + inputString[1];
 
         return s;
 
@@ -317,7 +319,7 @@ public class Player {
      * @author Joachim Forsberg
      * */
     public void drawPlayerMap() {
-        map.drawMap();
+        this.map.drawMap();
     }
 
     /**
@@ -325,6 +327,6 @@ public class Player {
      * @author Joachim Forsberg
      * */
     public void printPlayerMap() {
-        map.printMap();
+        this.map.printMap();
     }
 }
