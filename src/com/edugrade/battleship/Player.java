@@ -191,26 +191,31 @@ public class Player {
      * @author Almen Novalic
      * */
     public int[] convertOpponentShot(String inputString) {
+        /**
+         * Vår karta är 11x11, index 0 är upptaget.
+         *  Vi lägger på +1 då vi kör på 1-10 och inte 0-9
+         *  Gäller både x och y
+         */
 
         int a[] = {0,0};
         int b = 0;
         String string = inputString.substring(8,9);
 
-        if (string.equals("a")){b = 0;}
-        else if(string.equals("b")){b = 1;}
-        else if (string.equals("c")){b = 2;}
-        else if (string.equals("d")){b = 3;}
-        else if (string.equals("e")){b = 4;}
-        else if (string.equals("f")){b = 5;}
-        else if (string.equals("g")){b = 6;}
-        else if (string.equals("h")){b = 7;}
-        else if (string.equals("i")){b = 8;}
-        else if (string.equals("j")){b = 9;}
+        if (string.equals("a")){b = 1;}  //Börjar på 1 istället för 0
+        else if(string.equals("b")){b = 2;}
+        else if (string.equals("c")){b = 3;}
+        else if (string.equals("d")){b = 4;}
+        else if (string.equals("e")){b = 5;}
+        else if (string.equals("f")){b = 6;}
+        else if (string.equals("g")){b = 7;}
+        else if (string.equals("h")){b = 8;}
+        else if (string.equals("i")){b = 9;}
+        else if (string.equals("j")){b = 10;}
 
         int c = Integer.parseInt(inputString.substring(7,8));
 
         a[0] = b;
-        a[1] = c;
+        a[1] = c + 1; //+1 för att hantera våra index korrekt
 
         return a;
 
@@ -233,7 +238,16 @@ public class Player {
 
     }
 
+    /**
+     * Builds message to opponent for initial shot
+     * @author Almen Novalic
+     * */
+    public String initialShot(){
 
+     return buildMessageToOpponent(new String[]{"i", shoot()});
+
+
+    }
 
     public void placeBoats(){
 
