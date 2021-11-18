@@ -1,21 +1,69 @@
 package com.edugrade.battleship;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Random;
+import java.util.*;
 
 public class Player {
 
-    private static Scanner scanner = new Scanner(System.in);
     private static Random random = new Random();
 
     private ArrayList<Boats> fleet;
     private GameMap map;
+    private ArrayList<String> hits;
+    private ArrayList<String> shots;
+    private ArrayList<String> closeHitShots;
+    private Set<String> generatedShots;
 
     public Player() {
         this.fleet = new ArrayList<>();
         this.map = new GameMap();
+        this.hits = new ArrayList<>();
+        this.shots = new ArrayList<>();
+        this.closeHitShots = new ArrayList<>();
+        this.generatedShots = new LinkedHashSet<>();
+    }
+
+    /**
+     * This method returns the Ship ID if the ship get hit.
+     * @author Joachim Forsberg
+     * @param coordinates The coordinates of the hit.
+     * */
+    public int getShipID(String coordinates) {
+        for (int i = 0; i < this.fleet.size(); i++) {
+            if(this.fleet.get(i).getLocationOnMap().contains(coordinates.toUpperCase(Locale.ROOT))) {
+                return this.fleet.get(i).getShipID();
+            }
+        }
+        return 0;
+    }
+    /**
+     * This method is used to decrease a hit point on a ship.
+     * @author Joachim Forsberg
+     * @param shipID The ship id.
+     * */
+    public int decrementShipLife(int shipID) {
+        for (int i = 0; i < this.fleet.size(); i++) {
+            if (this.fleet.get(i).getShipID() == shipID) {
+                this.fleet.get(i).setNumOfSquares(this.fleet.get(i).getNumOfSquares() - 1);
+                return this.fleet.get(i).getNumOfSquares();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * This method is used to check if a ship is active or if it's sunk.
+     * @author Joachim Forsberg
+     * @param shipID The ship id
+     * */
+    public String shipIsActive(int shipID) {
+        for (int i = 0; i < this.fleet.size(); i++) {
+            if (this.fleet.get(i).getShipID() == shipID) {
+                if (this.fleet.get(i).getNumOfSquares() == 0) {
+                    return "s";
+                }
+            }
+        }
+        return "h";
     }
 
     /**
@@ -23,16 +71,16 @@ public class Player {
      * @author Joachim Forsberg
      * */
     public void createFleet() {
-        fleet.add(Boats.createBoat("Carrier", 5, new String[] {"D4", "E4", "F4", "G4", "H4"}));
-        fleet.add(Boats.createBoat("Battleship", 4, new String[] {"A4", "A5", "A6", "A7"}));
-        fleet.add(Boats.createBoat("Battleship", 4, new String[] {"J0", "J1", "J2", "J3"}));
-        fleet.add(Boats.createBoat("Cruiser", 3, new String[] {"D2", "E2", "F2"}));
-        fleet.add(Boats.createBoat("Cruiser", 3, new String[] {"C6", "D6", "E6"}));
-        fleet.add(Boats.createBoat("Cruiser", 3, new String[] {"J5", "J6", "J7"}));
-        fleet.add(Boats.createBoat("Submarine", 2, new String[] {"H9", "I9"}));
-        fleet.add(Boats.createBoat("Submarine", 2, new String[] {"C9", "D9"}));
-        fleet.add(Boats.createBoat("Submarine", 2, new String[] {"G6", "G7"}));
-        fleet.add(Boats.createBoat("Submarine", 2, new String[] {"C0", "D0"}));
+        fleet.add(Boats.createBoat(1,"Carrier", 5, new ArrayList<>(Arrays.asList("D4", "E4", "F4", "G4", "H4"))));
+        fleet.add(Boats.createBoat(2,"Battleship", 4, new ArrayList<>(Arrays.asList("A4", "A5", "A6", "A7"))));
+        fleet.add(Boats.createBoat(3,"Battleship", 4, new ArrayList<>(Arrays.asList("J0", "J1", "J2", "J3"))));
+        fleet.add(Boats.createBoat(4,"Cruiser", 3, new ArrayList<>(Arrays.asList("D2", "E2", "F2"))));
+        fleet.add(Boats.createBoat(5,"Cruiser", 3, new ArrayList<>(Arrays.asList("C6", "D6", "E6"))));
+        fleet.add(Boats.createBoat(6,"Cruiser", 3, new ArrayList<>(Arrays.asList("J5", "J6", "J7"))));
+        fleet.add(Boats.createBoat(7,"Submarine", 2, new ArrayList<>(Arrays.asList("H9", "I9"))));
+        fleet.add(Boats.createBoat(8,"Submarine", 2, new ArrayList<>(Arrays.asList("C9", "D9"))));
+        fleet.add(Boats.createBoat(9,"Submarine", 2, new ArrayList<>(Arrays.asList("G6", "G7"))));
+        fleet.add(Boats.createBoat(10,"Submarine", 2, new ArrayList<>(Arrays.asList("C0", "D0"))));
     }
 
     /**
@@ -48,7 +96,7 @@ public class Player {
     }
 
     /**
-     * This is the updated method to place the fleet on the game map. Which
+     * This method is used to place the fleet on the game map. Which
      * uses the locations from the Boat objects.
      * @author Joachim Forsberg
      * @param location Is the ArrayList of all the fleet's locations.
@@ -248,70 +296,6 @@ public class Player {
 
      return buildMessageToOpponent(new String[]{"i", shoot()});
 
-
-    }
-
-    public void placeBoats(){
-
-        /** Båtarnas placering
-         * [-], 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-         * [A],  ,  ,  ,  , @, @, @, @,  ,  ]
-         * [B],  ,  ,  ,  ,  ,  ,  ,  ,  ,  ]
-         * [C], @,  ,  ,  ,  ,  , @,  ,  , @]
-         * [D], @,  , @,  , @,  , @,  ,  , @]
-         * [E],  ,  , @,  , @,  , @,  ,  ,  ]
-         * [F],  ,  , @,  , @,  ,  ,  ,  ,  ]
-         * [G],  ,  ,  ,  , @,  , @, @,  ,  ]
-         * [H],  ,  ,  ,  , @,  ,  ,  ,  , @]
-         * [I],  ,  ,  ,  ,  ,  ,  ,  ,  , @]
-         * [J], @, @, @, @,  , @, @, @,  ,  ]
-         * */
-
-        /** Placerar ut båtar, MAP_01 **/
-
-        /** Hangar x 1 **/
-        map.setIndexValue("@",4,5);
-        map.setIndexValue("@",5,5);
-        map.setIndexValue("@",6,5);
-        map.setIndexValue("@",7,5);
-        map.setIndexValue("@",8,5);
-
-        /** Slagskepp x 2 **/
-        map.setIndexValue("@",1,5);
-        map.setIndexValue("@",1,6);
-        map.setIndexValue("@",1,7);
-        map.setIndexValue("@",1,8);
-
-        map.setIndexValue("@",10,1);
-        map.setIndexValue("@",10,2);
-        map.setIndexValue("@",10,3);
-        map.setIndexValue("@",10,4);
-
-        /** Kryssare x 3 **/
-        map.setIndexValue("@",10,6);
-        map.setIndexValue("@",10,7);
-        map.setIndexValue("@",10,8);
-
-        map.setIndexValue("@",4,3);
-        map.setIndexValue("@",5,3);
-        map.setIndexValue("@",6,3);
-
-        map.setIndexValue("@",3,7);
-        map.setIndexValue("@",4,7);
-        map.setIndexValue("@",5,7);
-
-        /** Ubåtar x 4 **/
-        map.setIndexValue("@",7,7);
-        map.setIndexValue("@",7,8);
-
-        map.setIndexValue("@",8,10);
-        map.setIndexValue("@",9,10);
-
-        map.setIndexValue("@",3,1);
-        map.setIndexValue("@",4,1);
-
-        map.setIndexValue("@",3,10);
-        map.setIndexValue("@",4,10);
     }
 
     /**

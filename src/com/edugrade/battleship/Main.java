@@ -11,7 +11,7 @@ public class Main {
     private static Player testPlayer2 = new Player();
 
     public static void main(String[] args) {
-        Menu.mainMenu();
+        //Menu.mainMenu();
 
         /**
          * Testar Båtobjekten.
