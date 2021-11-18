@@ -1,21 +1,361 @@
 package com.edugrade.battleship;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Random;
+import java.util.*;
 
 public class Player {
 
-    private static Scanner scanner = new Scanner(System.in);
     private static Random random = new Random();
 
     private ArrayList<Boats> fleet;
     private GameMap map;
+    private ArrayList<String> hits;
+    private ArrayList<String> shots;
+    private ArrayList<String> closeHitShots;
+    private Set<String> generatedShots;
 
     public Player() {
         this.fleet = new ArrayList<>();
         this.map = new GameMap();
+        this.hits = new ArrayList<>();
+        this.shots = new ArrayList<>();
+        this.closeHitShots = new ArrayList<>();
+        this.generatedShots = new LinkedHashSet<>();
+    }
+
+    /**
+     * This method returns the Ship ID if the ship get hit.
+     * @author Joachim Forsberg
+     * @param coordinates The coordinates of the hit.
+     * */
+    public int getShipID(String coordinates) {
+        for (int i = 0; i < this.fleet.size(); i++) {
+            if(this.fleet.get(i).getLocationOnMap().contains(coordinates.toUpperCase(Locale.ROOT))) {
+                return this.fleet.get(i).getShipID();
+            }
+        }
+        return 0;
+    }
+    /**
+     * This method is used to decrease a hit point on a ship.
+     * @author Joachim Forsberg
+     * @param shipID The ship id.
+     * */
+    public int decrementShipLife(int shipID) {
+        for (int i = 0; i < this.fleet.size(); i++) {
+            if (this.fleet.get(i).getShipID() == shipID) {
+                this.fleet.get(i).setNumOfSquares(this.fleet.get(i).getNumOfSquares() - 1);
+                return this.fleet.get(i).getNumOfSquares();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * This method is used to check if a ship is active or if it's sunk.
+     * @author Joachim Forsberg
+     * @param shipID The ship id
+     * */
+    public String shipIsActive(int shipID) {
+        for (int i = 0; i < this.fleet.size(); i++) {
+            if (this.fleet.get(i).getShipID() == shipID) {
+                if (this.fleet.get(i).getNumOfSquares() == 0) {
+                    return "s";
+                }
+            }
+        }
+        return "h";
+    }
+
+    /**
+     * This method is used to get the surrounding coordinates on a hit.
+     * Currently, it adds the hits in front of an ArrayList to be picked first.
+     *
+     * @author Joachim Forsberg
+     * @param coordinates coordinates from the hit
+     * */
+    public String shootCloseToLastHit(String coordinates) {
+
+        int number = Integer.parseInt(coordinates.substring(1));
+        String letter = coordinates.substring(0,1);
+        String letters = "abcdefghij";
+
+        int letterAtIndex = letters.indexOf(letter);
+
+        // Övre vänstra hörnet
+        if (letterAtIndex == 0 && number == 0) {
+
+            String sameNumLetterPlusOne = number + Character.toString((letters.charAt(letterAtIndex + 1)));
+            String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
+
+            if (this.shots.contains(numPlusOneSameLetter)) {
+                int pos = this.shots.indexOf(numPlusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(sameNumLetterPlusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterPlusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+
+        // Nedre vänstra hörnet
+        if (letterAtIndex == 9 && number == 0) {
+            String sameNumLetterMinusOne = number + Character.toString((letters.charAt(letterAtIndex - 1)));
+            String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
+            if (this.shots.contains(sameNumLetterMinusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterMinusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numPlusOneSameLetter)) {
+                int pos = this.shots.indexOf(numPlusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+
+        // Mitten vänstra kanten
+        if (letterAtIndex > 0 && letterAtIndex < 9 && number == 0) {
+            String sameNumLetterPlusOne = number + Character.toString((letters.charAt(letterAtIndex + 1)));
+            String sameNumLetterMinusOne = number + Character.toString((letters.charAt(letterAtIndex - 1)));
+            String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
+
+            if (this.shots.contains(numPlusOneSameLetter)) {
+                int pos = this.shots.indexOf(numPlusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(sameNumLetterPlusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterPlusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(sameNumLetterMinusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterMinusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+
+        // Mitten övre kanten
+        if (letterAtIndex == 0 && number > 0 && number < 9) {
+            String sameNumLetterPlusOne = number + Character.toString((letters.charAt(letterAtIndex + 1)));
+            String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
+            String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
+            if (this.shots.contains(numPlusOneSameLetter)) {
+                int pos = this.shots.indexOf(numPlusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(sameNumLetterPlusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterPlusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numMinusOneSameLetter)) {
+                int pos = this.shots.indexOf(numMinusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+
+        // Övre högra hörnet
+        if (letterAtIndex == 0 && number == 9) {
+            String sameNumLetterPlusOne = number + Character.toString((letters.charAt(letterAtIndex + 1)));
+            String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
+            if (this.shots.contains(sameNumLetterPlusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterPlusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numMinusOneSameLetter)) {
+                int pos = this.shots.indexOf(numMinusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+
+        // Nedre högra hörnet
+        if (letterAtIndex == 9 && number == 9) {
+            String sameNumLetterMinusOne = number + Character.toString((letters.charAt(letterAtIndex - 1)));
+            String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
+            if (this.shots.contains(sameNumLetterMinusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterMinusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numMinusOneSameLetter)) {
+                int pos = this.shots.indexOf(numMinusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+
+        // Mitten högra kanten
+        if (letterAtIndex > 0 && letterAtIndex < 9 && number == 9) {
+            String sameNumLetterMinusOne = number + Character.toString((letters.charAt(letterAtIndex - 1)));
+            String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
+            String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
+            if (this.shots.contains(sameNumLetterMinusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterMinusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numMinusOneSameLetter)) {
+                int pos = this.shots.indexOf(numMinusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numPlusOneSameLetter)) {
+                int pos = this.shots.indexOf(numPlusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+        // Mitten nedre kanten
+        if (letterAtIndex == 9 && number > 0 && number < 9) {
+            String sameNumLetterMinusOne = number + Character.toString((letters.charAt(letterAtIndex - 1)));
+            String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
+            String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
+            if (this.shots.contains(sameNumLetterMinusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterMinusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numMinusOneSameLetter)) {
+                int pos = this.shots.indexOf(numMinusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numPlusOneSameLetter)) {
+                int pos = this.shots.indexOf(numPlusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+
+        // Inte på kanterna
+        if (letterAtIndex > 0 && letterAtIndex < 9 && number > 0 && number < 9) {
+            String sameNumLetterPlusOne = number + Character.toString((letters.charAt(letterAtIndex + 1)));
+            String sameNumLetterMinusOne = number + Character.toString((letters.charAt(letterAtIndex - 1)));
+            String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
+            String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
+            if (this.shots.contains(sameNumLetterMinusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterMinusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(sameNumLetterPlusOne)) {
+                int pos = this.shots.indexOf(sameNumLetterPlusOne);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numMinusOneSameLetter)) {
+                int pos = this.shots.indexOf(numMinusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (this.shots.contains(numPlusOneSameLetter)) {
+                int pos = this.shots.indexOf(numPlusOneSameLetter);
+                String shot = this.shots.get(pos);
+                this.shots.remove(shot);
+                this.closeHitShots.add(0, shot);
+                //coordsCloseToHit.add(shot);
+            }
+            if (!this.closeHitShots.isEmpty()) {
+                String shot = this.closeHitShots.get(0);
+                this.closeHitShots.remove(shot);
+                return shot;
+            }
+        }
+        return generateShot();
     }
 
     /**
@@ -23,16 +363,16 @@ public class Player {
      * @author Joachim Forsberg
      * */
     public void createFleet() {
-        fleet.add(Boats.createBoat("Carrier", 5, new String[] {"D4", "E4", "F4", "G4", "H4"}));
-        fleet.add(Boats.createBoat("Battleship", 4, new String[] {"A4", "A5", "A6", "A7"}));
-        fleet.add(Boats.createBoat("Battleship", 4, new String[] {"J0", "J1", "J2", "J3"}));
-        fleet.add(Boats.createBoat("Cruiser", 3, new String[] {"D2", "E2", "F2"}));
-        fleet.add(Boats.createBoat("Cruiser", 3, new String[] {"C6", "D6", "E6"}));
-        fleet.add(Boats.createBoat("Cruiser", 3, new String[] {"J5", "J6", "J7"}));
-        fleet.add(Boats.createBoat("Submarine", 2, new String[] {"H9", "I9"}));
-        fleet.add(Boats.createBoat("Submarine", 2, new String[] {"C9", "D9"}));
-        fleet.add(Boats.createBoat("Submarine", 2, new String[] {"G6", "G7"}));
-        fleet.add(Boats.createBoat("Submarine", 2, new String[] {"C0", "D0"}));
+        fleet.add(Boats.createBoat(1,"Carrier", 5, new ArrayList<>(Arrays.asList("D4", "E4", "F4", "G4", "H4"))));
+        fleet.add(Boats.createBoat(2,"Battleship", 4, new ArrayList<>(Arrays.asList("A4", "A5", "A6", "A7"))));
+        fleet.add(Boats.createBoat(3,"Battleship", 4, new ArrayList<>(Arrays.asList("J0", "J1", "J2", "J3"))));
+        fleet.add(Boats.createBoat(4,"Cruiser", 3, new ArrayList<>(Arrays.asList("D2", "E2", "F2"))));
+        fleet.add(Boats.createBoat(5,"Cruiser", 3, new ArrayList<>(Arrays.asList("C6", "D6", "E6"))));
+        fleet.add(Boats.createBoat(6,"Cruiser", 3, new ArrayList<>(Arrays.asList("J5", "J6", "J7"))));
+        fleet.add(Boats.createBoat(7,"Submarine", 2, new ArrayList<>(Arrays.asList("H9", "I9"))));
+        fleet.add(Boats.createBoat(8,"Submarine", 2, new ArrayList<>(Arrays.asList("C9", "D9"))));
+        fleet.add(Boats.createBoat(9,"Submarine", 2, new ArrayList<>(Arrays.asList("G6", "G7"))));
+        fleet.add(Boats.createBoat(10,"Submarine", 2, new ArrayList<>(Arrays.asList("C0", "D0"))));
     }
 
     /**
@@ -42,13 +382,13 @@ public class Player {
     public ArrayList<String> getFleetLocation() {
         ArrayList<String> locations = new ArrayList<>();
         for (int i = 0; i < this.fleet.size(); i++) {
-            locations.addAll(Arrays.asList(this.fleet.get(i).getLocationOnMap()));
+            locations.addAll(this.fleet.get(i).getLocationOnMap());
         }
         return locations;
     }
 
     /**
-     * This is the updated method to place the fleet on the game map. Which
+     * This method is used to place the fleet on the game map. Which
      * uses the locations from the Boat objects.
      * @author Joachim Forsberg
      * @param location Is the ArrayList of all the fleet's locations.
@@ -109,82 +449,124 @@ public class Player {
             }
         }
     }
+
     /**
-     * Randomize a shot
-     * returns string Y + X  (A-J + 1-10)
-     * @author Almen Novalic
+     * This method is used to check if a ship got hit or not.
+     * @author Joachim Forsberg
+     * @param coordinates Coordinates of the shot
      * */
-    public String shoot(){
+    public boolean checkShipPosition(String coordinates) {
+        ArrayList<String> locations = new ArrayList<>();
+        for (int i = 0; i < getFleetLocation().size(); i++) {
+            locations.add(getFleetLocation().get(i).toLowerCase(Locale.ROOT));
+        }
+        return locations.contains(coordinates);
+    }
 
-        String shotY = "";
-        String shotX = "";
-        int shot;
+    /**
+     * This method is used to fill an ArrayList with shots from a LinkedHashSet
+     * @author Joachim Forsberg
+     * */
+    public void fillShotsArray() {
+        this.shots.addAll(this.generatedShots);
+        Collections.shuffle(this.shots);
+    }
 
-        shot = random.nextInt(9) + 0;
-        shotY = String.valueOf(shot);
+    /**
+     * This method is used to generate 100 shots
+     * @author Joachim Forsberg
+     * */
+    public void generateShots() {
+        String coordinateLetter = "abcdefghij";
 
-        shot = random.nextInt(9) + 0;
-        if (shot == 0){shotX = "a";}
-        else if (shot == 1){shotX = "b";}
-        else if (shot == 2){shotX = "c";}
-        else if (shot == 3){shotX = "d";}
-        else if (shot == 4){shotX = "e";}
-        else if (shot == 5){shotX = "f";}
-        else if (shot == 6){shotX = "g";}
-        else if (shot == 7){shotX = "h";}
-        else if (shot == 8){shotX = "i";}
-        else if (shot == 9){shotX = "j";}
-
-        return shotY + shotX;
-
+        for (int i = 0; i < coordinateLetter.length(); i++) {
+            for (int j = 0; j < coordinateLetter.length(); j++) {
+                char letter = coordinateLetter.charAt(i);
+                int number = j;
+                this.generatedShots.add(number + Character.toString(letter));
+            }
+        }
     }
 
 
     /**
+     * This method is used to draw a shot from the ArrayList
+     * returns string Y + X  (A-J + 1-10)
+     * @author Almen Novalic, Joachim Forsberg
+     * */
+    public String generateShot() {
+        if (!this.closeHitShots.isEmpty()) {
+            String shot = this.closeHitShots.get(0);
+            this.closeHitShots.remove(shot);
+            return shot;
+        } else {
+            String shot = this.shots.get(0);
+            this.shots.remove(shot);
+            return shot;
+        }
+    }
+
+    public void printShots() {
+        this.shots.forEach(e -> System.out.println(e));
+    }
+
+    /**
      * Sets opponents shot on out maps, returns hit or miss
-     * @author Almen Novalic
+     * @author Almen Novalic, Joachim Forsberg
+     * @param shots Array of two index values for the map
      * */
     public String getShot(int[] shots) {
 
         String value = this.map.getIndexValue(shots[0], shots[1]);
-        String value2 = "";
-
         if (value.equals("@")) {
             this.map.setIndexValue("$", shots[0], shots[1]);
-            value2 = "h";
-        } else {
+        }
+        if (value.equals(" ")) {
             this.map.setIndexValue("X", shots[0], shots[1]);
-            value2 = "m";
         }
-        return value2;
+        return value;
     }
 
+    /**
+     * This method returns the coordinates from the previous hit
+     * @author Joachim Forsberg
+     * */
+    public String getHitFromArray() {
+        return this.hits.get(this.hits.size()-1);
+    }
 
     /**
-     * Check if opponent has hit us.
-     * Returns h or m.
-     * @author Almen Novalic
+     * This method add the previous shot to a list, incase of a hit the coordinates
+     * of the last hit is used for shooting close to the last hit.
+     * @author Joachim Forsberg
+     * @param shot The message from either Server or Client
      * */
-    public String checkHit(int[] shots) {
-        String value = this.map.getIndexValue(shots[0], shots[1]);
+    public void addHitToArray(String shot) {
+        this.hits.add(shot);
+    }
 
-        if (value.equals("$")) {
+    /**
+     * This method is used to generate the return message
+     * @author Joachim Forsberg
+     * @param hit Coordinates if a ship was hit
+     * */
+    public String getHitValue(boolean hit) {
+        if (hit){
             return "h";
-        } else {
-            return "m";
         }
+        return "m";
     }
 
-
     /**
-     * Check if we made a hit on opponent ship.
-     * Returns h or m.
-     * @author Almen Novalic
+     * This method retuns the coordinates from the message
+     * @author Joachim Forsberg
+     * @param message The message that is sent between server and client
      * */
-    public String checkIfWeHitOpponent(String inputString) {
-
-        String result = inputString.substring(0,1);
-        return result;
+    public String getIncomingCoordinate(String message) {
+        String coordinates = message.substring(7);
+        String getLetter = coordinates.substring(0,1);
+        String getNumber = coordinates.substring(1);
+        return getNumber + getLetter;
     }
 
     /**
@@ -201,7 +583,7 @@ public class Player {
 
         int a[] = {0,0};
         int b = 0;
-        String string = inputString.substring(8,9);
+        String string = inputString.substring(0,1);
 
         if (string.equals("a")){b = 1;}  //Börjar på 1 istället för 0
         else if(string.equals("b")){b = 2;}
@@ -214,7 +596,7 @@ public class Player {
         else if (string.equals("i")){b = 9;}
         else if (string.equals("j")){b = 10;}
 
-        int c = Integer.parseInt(inputString.substring(7,8));
+        int c = Integer.parseInt(inputString.substring(1));
 
         a[0] = b;
         a[1] = c + 1; //+1 för att hantera våra index korrekt
@@ -229,15 +611,8 @@ public class Player {
      * and coordinates for a new shot
      * @author Almen Novalic
      * */
-    public String buildMessageToOpponent(String[] inputString ){
-
-        String s = "";
-
-        s = inputString[0] + " shot " + inputString[1];
-
-        return s;
-
-
+    public String returnString(String checkHit, String coordinates) {
+        return checkHit + " shot " + coordinates;
     }
 
     /**
@@ -246,72 +621,8 @@ public class Player {
      * */
     public String initialShot(){
 
-     return buildMessageToOpponent(new String[]{"i", shoot()});
+     return returnString("i", generateShot());
 
-
-    }
-
-    public void placeBoats(){
-
-        /** Båtarnas placering
-         * [-], 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-         * [A],  ,  ,  ,  , @, @, @, @,  ,  ]
-         * [B],  ,  ,  ,  ,  ,  ,  ,  ,  ,  ]
-         * [C], @,  ,  ,  ,  ,  , @,  ,  , @]
-         * [D], @,  , @,  , @,  , @,  ,  , @]
-         * [E],  ,  , @,  , @,  , @,  ,  ,  ]
-         * [F],  ,  , @,  , @,  ,  ,  ,  ,  ]
-         * [G],  ,  ,  ,  , @,  , @, @,  ,  ]
-         * [H],  ,  ,  ,  , @,  ,  ,  ,  , @]
-         * [I],  ,  ,  ,  ,  ,  ,  ,  ,  , @]
-         * [J], @, @, @, @,  , @, @, @,  ,  ]
-         * */
-
-        /** Placerar ut båtar, MAP_01 **/
-
-        /** Hangar x 1 **/
-        map.setIndexValue("@",4,5);
-        map.setIndexValue("@",5,5);
-        map.setIndexValue("@",6,5);
-        map.setIndexValue("@",7,5);
-        map.setIndexValue("@",8,5);
-
-        /** Slagskepp x 2 **/
-        map.setIndexValue("@",1,5);
-        map.setIndexValue("@",1,6);
-        map.setIndexValue("@",1,7);
-        map.setIndexValue("@",1,8);
-
-        map.setIndexValue("@",10,1);
-        map.setIndexValue("@",10,2);
-        map.setIndexValue("@",10,3);
-        map.setIndexValue("@",10,4);
-
-        /** Kryssare x 3 **/
-        map.setIndexValue("@",10,6);
-        map.setIndexValue("@",10,7);
-        map.setIndexValue("@",10,8);
-
-        map.setIndexValue("@",4,3);
-        map.setIndexValue("@",5,3);
-        map.setIndexValue("@",6,3);
-
-        map.setIndexValue("@",3,7);
-        map.setIndexValue("@",4,7);
-        map.setIndexValue("@",5,7);
-
-        /** Ubåtar x 4 **/
-        map.setIndexValue("@",7,7);
-        map.setIndexValue("@",7,8);
-
-        map.setIndexValue("@",8,10);
-        map.setIndexValue("@",9,10);
-
-        map.setIndexValue("@",3,1);
-        map.setIndexValue("@",4,1);
-
-        map.setIndexValue("@",3,10);
-        map.setIndexValue("@",4,10);
     }
 
     /**
