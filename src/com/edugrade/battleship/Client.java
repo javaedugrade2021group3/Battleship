@@ -6,7 +6,10 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Client {
-    public  static  void main(String[]args){
+    public Client() {
+    }
+
+    public void startClient(){
         Socket socket= null;
         InputStreamReader inputStreamReader = null;
         OutputStreamWriter outputStreamWriter = null;

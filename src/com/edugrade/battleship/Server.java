@@ -5,7 +5,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static  void  main(String[] args) throws IOException {
+
+    public Server() {
+    }
+    public void startServer() throws IOException {
         Socket socket= null;
         InputStreamReader inputStreamReader = null;
         OutputStreamWriter outputStreamWriter = null;
@@ -22,17 +25,15 @@ public class Server {
                 outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
                 bufferedReader = new BufferedReader(inputStreamReader);
                 bufferedWriter = new BufferedWriter(outputStreamWriter);
-                if(socket!=null){
-                    bufferedWriter.write(showOptions("Welcome to group 3 server,"));
-                    //här ska man visa game instructions ,start options
-                }
+
                 while (true){
+                    //här tar server emot  meddelande från client
                     String msgFromClient = bufferedReader.readLine();
                     System.out.println("Client sent message: " + msgFromClient);
-                    //här ska man börja kolla va client skriver och skicka svar
-                    bufferedWriter.write("Well received");
+                    //här svarar serven till client
+                    //jag tror det är här som ska implimenteras den classen eller methoden för logiken
+                    bufferedWriter.write("Well received ! skicka din shoot");
                     bufferedWriter.newLine();
-                    bufferedWriter.flush();
                     if(msgFromClient.equalsIgnoreCase("quit")){
                         bufferedWriter.write("Bye see u next time");
                         break;
@@ -44,15 +45,13 @@ public class Server {
                 inputStreamReader.close();
                 outputStreamWriter.close();
             } catch (IOException e){
-             e.printStackTrace();
+
             }
 
         }
 
 
-    }
-    public static String showOptions(String message){
-        return message;
+
     }
 }
 
