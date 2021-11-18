@@ -1,62 +1,59 @@
 package com.edugrade.battleship;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Menu {
-    private static Scanner scanner = new Scanner(System.in);
     private static Player player = new Player();
     private static Computer computer = new Computer();
+    private static Server server = new Server();
+    private static Client client = new Client();
 
-    public static void mainMenu() {
-
-        player.drawPlayerMap();
-        computer.drawComputerMap();
-
-        System.out.println("Sänkaskepp demoversion");
-        int choice;
-        String menu = "1: Placera båtarna\n" +
-                "2: Starta spelet\n" +
+    public static void mainMenu() throws IOException {
+        ShowStartProgramOptions();
+    }
+    public static void ShowStartProgramOptions() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("-------------------------");
+        System.out.println("Välkomen till spelet! nu kör vi");
+        System.out.println("\n" +"\n" +
+                "\n" +
+                "\n" +
+                "                                     # #  ( )\n" +
+                "                                  ___#_#___|__\n" +
+                "                              _  |____________|  _\n" +
+                "                       _=====| | |            | | |==== _\n" +
+                "                 =====| |.---------------------------. | |====\n" +
+                "   <--------------------'   .  .  .  .  .  .  .  .   '--------------/\n" +
+                "     \\                                                             /\n" +
+                "      \\_______________________________________________WWS_________/\n" +
+                "  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n" +
+                "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww\n" +
+                "   wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww \n"
+        );
+        int startChoice;
+        String startOptions = "1: Starta spelet som server\n" +
+                "2: Starta spelet som client\n"+
                 "0: Avsluta";
 
-        System.out.println(menu);
+        System.out.println(startOptions);
+        startChoice = scanner.nextInt();
+        switch (startChoice){
+            case 1:
+                System.out.println("Server startade");
+                //server.start(); den ska anropa direkt till showMenuOptionsAfterServerOrClientStart()
+                server.startServer();
+                break;
+            case 2:
+                System.out.println("Client startade");
+                //client.start();den ska anropa direkt till showMenuOptionsAfterServerOrClientStart()
+                client.startClient();
+            case 0:
+                System.out.println("Avslutar programmet..");
+                break;
 
-        do  {
-            choice = scanner.nextInt();
-
-            switch (choice) {
-                case 1:
-                    System.out.println("Båtarna placerade!");
-                    player.placeBoats();
-                    computer.placeBoats();
-                    break;
-                case 2:
-                    System.out.println("Slaget har börjat!");
-                    startGame();
-                case 0:
-                    System.out.println("Avslutar programmet..");
-                    break;
-            }
-        } while (choice != 0);
-    }
-
-    public static void startGame() {
-        int rounds = 1;
-        while (true) {
-            // Spelaren börjar skjuta
-            System.out.println("Omgång: " + rounds);
-            //String playerShots = player.shoot();
-            //computer.getShot(playerShots);
-            System.out.println("Datorns spelplan");
-            computer.printComputerMap();
-            //computer.checkHit(playerShots);
-
-            // Datorn skjuter tillbaka
-            int[] computerShots = computer.shoot();
-            player.getShot(computerShots);
-            System.out.println("Spelarens spelplan");
-            player.printPlayerMap();
-            player.checkHit(computerShots);
-            rounds++;
         }
+
     }
+
 }
