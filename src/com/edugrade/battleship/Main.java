@@ -11,62 +11,63 @@ public class Main {
     private static Player testPlayer2 = new Player();
 
     public static void main(String[] args) {
-        Menu.mainMenu();
-
-        /**
-         * Testar Båtobjekten.
-         * */
+        //Menu.mainMenu();
 
         // Försvarare "server"
         testPlayer.drawPlayerMap(); // Genererar spelplanen
         testPlayer.createFleet(); // Skapar spelarens flotta
         testPlayer.placeFleetOnMap(testPlayer.getFleetLocation()); // Placerar flottan på spelplanen
+        testPlayer.generateShots();
+        testPlayer.fillShotsArray();
 
         // Attackerare "klient"
         testPlayer2.drawPlayerMap();
         testPlayer2.createFleet();
         testPlayer2.placeFleetOnMap(testPlayer2.getFleetLocation());
+        testPlayer2.generateShots();
+        testPlayer2.fillShotsArray();
 
 
-        // Skott 1
+        // Init shot by "client"
         String initShot = testPlayer2.initialShot();
-        System.out.println("testPlayer2 skjuter: " + initShot);
-        testPlayer.getShot(testPlayer.convertOpponentShot(initShot));
-        String checkHit = testPlayer.checkHit(testPlayer.convertOpponentShot(initShot));
+        System.out.println("Initial Shot: " + initShot);
 
-        // Skott 2
-        String pOneShot = testPlayer.buildMessageToOpponent(new String[] {checkHit, testPlayer.shoot()});
-        System.out.println("testPlayer skjuter: " + pOneShot);
+        // Init shot is received by "server"
+        String coordinates = testPlayer.getIncomingCoordinate(initShot);
+        System.out.println("Coordinates from the init shot: " + coordinates);
 
+        boolean checkIfShipGotHit = testPlayer.checkShipPosition(coordinates);
+        System.out.println("Check if ship was hit: " + checkIfShipGotHit);
 
-        for (int i = 0; i < 10; i++) {
-            testPlayer2.getShot(testPlayer2.convertOpponentShot(pOneShot));
-            String pTwoCheckHit = testPlayer2.checkHit(testPlayer2.convertOpponentShot(pOneShot));
-            String pTwoShot = testPlayer2.buildMessageToOpponent(new String[] {pTwoCheckHit, testPlayer2.shoot()});
-            System.out.println("testPlayer2 skjuter: " + pTwoShot);
+        String returnLetter;
+        String returnMessage;
 
-            testPlayer.getShot(testPlayer.convertOpponentShot(pTwoShot));
-            String pOneCheckH = testPlayer.checkHit(testPlayer.convertOpponentShot(pTwoShot));
-            pOneShot = testPlayer.buildMessageToOpponent(new String[] {pOneCheckH, testPlayer.shoot()});
-            System.out.println("testPlayer skjuter: " + pOneShot);
+        if (checkIfShipGotHit) { // If ship was hit
+            int shipID = testPlayer.getShipID(coordinates);
+            System.out.println("Ship ID: " + shipID);
+            testPlayer.decrementShipLife(shipID);
+            returnLetter = testPlayer.shipIsActive(shipID);
+            System.out.println("First letter of return message if ship was hit: " + returnLetter);
+            int[] markMap = testPlayer.convertOpponentShot(coordinates);
+            testPlayer.getShot(markMap);
+        } else { // If ship wasn't hit
+            returnLetter = testPlayer.getHitValue(false);
+            System.out.println("First letter of return message if ship wasn't hit: " + returnLetter);
+            int[] markMap = testPlayer.convertOpponentShot(coordinates);
+            testPlayer.getShot(markMap);
         }
 
-        System.out.println("testPlayer2 skjuter på denna karta");
+        // Shoot back
+        if (initShot.substring(0,1).equals("h")) {
+            coordinates = testPlayer.getIncomingCoordinate(testPlayer.getHitFromArray());
+            returnMessage = testPlayer.returnString(returnLetter, testPlayer.shootCloseToLastHit(coordinates));
+        } else {
+            returnMessage = testPlayer.returnString(returnLetter, testPlayer.generateShot());
+        }
+
+        System.out.println("Return shot: " + returnMessage);
+
         testPlayer.printPlayerMap();
-
-        System.out.println("testPlayer skjuter på denna karta");
-        testPlayer2.printPlayerMap();
-
-
-        /*
-        testPlayer.getShot(testPlayer.convertOpponentShot("h shot 0j"));
-        System.out.println(testPlayer.initialShot());
-        testPlayer.printPlayerMap();
-        //System.out.println(testPlayer.checkHit(testPlayer.convertOpponentShot("h shot 4a")));
-        //System.out.println(testPlayer.buildMessageToOpponent(new String[]{testPlayer.checkIfWeHitOpponent("h shot 5g"), testPlayer.shoot()}));
-
-         */
-
-
+        testPlayer.addHitToArray(returnMessage);
     }
 }

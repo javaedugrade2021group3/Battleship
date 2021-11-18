@@ -65,8 +65,8 @@ public class StartOptions {
             switch (choice) {
                 case 1:
                     System.out.println("Båtarna placerade!");
-                    player.placeBoats();
-                    computer.placeBoats();
+                    //player.placeBoats();
+                    //computer.placeBoats();
                     break;
                 case 2:
                     System.out.println("Slaget har börjat!");
@@ -95,7 +95,7 @@ public class StartOptions {
             player.getShot(computerShots);
             System.out.println("Spelarens spelplan");
             player.printPlayerMap();
-            player.checkHit(computerShots);
+            //player.checkHit(computerShots);
             rounds++;
         }
     }
