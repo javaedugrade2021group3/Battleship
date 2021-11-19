@@ -1,18 +1,13 @@
 package com.edugrade.battleship;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Menu {
-    private static Player player = new Player();
-    private static Computer computer = new Computer();
-    private static Server server = new Server();
-    private static Client client = new Client();
 
-    public static void mainMenu() throws IOException {
+    public static void mainMenu() {
         ShowStartProgramOptions();
     }
-    public static void ShowStartProgramOptions() throws IOException {
+    public static void ShowStartProgramOptions() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("-------------------------");
         System.out.println("Välkomen till spelet! nu kör vi");
@@ -41,19 +36,14 @@ public class Menu {
         switch (startChoice){
             case 1:
                 System.out.println("Server startade");
-                //server.start(); den ska anropa direkt till showMenuOptionsAfterServerOrClientStart()
-                server.startServer();
+                Server.startServer();
                 break;
             case 2:
                 System.out.println("Client startade");
-                //client.start();den ska anropa direkt till showMenuOptionsAfterServerOrClientStart()
-                client.startClient();
+                //Client.startClient(); // Denna är bortkommenterad för att det ligger en main i client för test
             case 0:
                 System.out.println("Avslutar programmet..");
                 break;
-
         }
-
     }
-
 }

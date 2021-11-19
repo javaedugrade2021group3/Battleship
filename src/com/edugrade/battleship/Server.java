@@ -6,52 +6,96 @@ import java.net.Socket;
 
 public class Server {
 
-    public Server() {
-    }
-    public void startServer() throws IOException {
-        Socket socket= null;
-        InputStreamReader inputStreamReader = null;
-        OutputStreamWriter outputStreamWriter = null;
-        BufferedReader bufferedReader = null;
-        BufferedWriter bufferedWriter = null;
-        ServerSocket serverSocket = null;
-        serverSocket = new ServerSocket(3030);
+    private static Player defendingPlayer = new Player();
 
-        while (true){
-            try {
-                socket= serverSocket.accept();
+    public static void startServer() {
 
-                inputStreamReader = new InputStreamReader(socket.getInputStream());
-                outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-                bufferedReader = new BufferedReader(inputStreamReader);
-                bufferedWriter = new BufferedWriter(outputStreamWriter);
+        final int WAIT_FOR_SECONDS = 2;
+        final int PORT = 65001;
 
-                while (true){
-                    //här tar server emot  meddelande från client
-                    String msgFromClient = bufferedReader.readLine();
-                    System.out.println("Client sent message: " + msgFromClient);
-                    //här svarar serven till client
-                    //jag tror det är här som ska implimenteras den classen eller methoden för logiken
-                    bufferedWriter.write("Well received ! skicka din shoot");
-                    bufferedWriter.newLine();
-                    if(msgFromClient.equalsIgnoreCase("quit")){
-                        bufferedWriter.write("Bye see u next time");
-                        break;
-                    }
+        defendingPlayer.drawPlayerMap();
+        defendingPlayer.createFleet();
+        defendingPlayer.placeFleetOnMap(defendingPlayer.getFleetLocation());
+        defendingPlayer.generateShots();
+        defendingPlayer.fillShotsArray();
+
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            Socket socket = serverSocket.accept();
+            System.out.println("Client Connected");
+
+            DataInputStream fromClient = new DataInputStream(socket.getInputStream());
+            DataOutputStream toClient = new DataOutputStream(socket.getOutputStream());
+
+            int boatSunk = 0;
+            String messageFromClient = "";
+            String endMessage = "Game Over";
+
+
+            while (boatSunk < 10) {
+                System.out.println("Server waiting for " + WAIT_FOR_SECONDS + " seconds.");
+                wait(WAIT_FOR_SECONDS);
+
+                messageFromClient = fromClient.readUTF();
+                System.out.println("From Client: " + messageFromClient);
+
+                String coordinates = defendingPlayer.getIncomingCoordinate(messageFromClient);
+                boolean checkIfShipIsHit = defendingPlayer.checkShipPosition(coordinates);
+
+                String returnLetter;
+                String returnMessage;
+
+                if (checkIfShipIsHit) {
+                    int shipID = defendingPlayer.getShipID(coordinates);
+                    defendingPlayer.decrementShipLife(shipID);
+                    returnLetter = defendingPlayer.shipIsActive(shipID);
+                    int[] markMap = defendingPlayer.convertOpponentShot(coordinates);
+                    defendingPlayer.getShot(markMap);
+                } else {
+                    returnLetter = defendingPlayer.getHitValue(false);
+                    int[] markMap = defendingPlayer.convertOpponentShot(coordinates);
+                    defendingPlayer.getShot(markMap);
                 }
-                socket.close();
-                bufferedReader.close();
-                bufferedWriter.close();
-                inputStreamReader.close();
-                outputStreamWriter.close();
-            } catch (IOException e){
 
+                if (messageFromClient.substring(0,1).equals("h")) {
+                    coordinates = defendingPlayer.getIncomingCoordinate(defendingPlayer.getHitFromArray());
+                    returnMessage = defendingPlayer.returnString(returnLetter, defendingPlayer.shootCloseToLastHit(coordinates));
+                } else if (messageFromClient.substring(0,1).equals("s")) {
+                    boatSunk++;
+                    defendingPlayer.clearCloseHitArray();
+                    returnMessage = defendingPlayer.returnString(returnLetter, defendingPlayer.generateShot());
+                } else {
+                    returnMessage = defendingPlayer.returnString(returnLetter, defendingPlayer.generateShot());
+                }
+
+                toClient.writeUTF(returnMessage);
+                System.out.println("Båtar Server har förlorar: " + boatSunk);
+                System.out.println("From server: " + returnMessage);
+                defendingPlayer.printPlayerMap();
+                defendingPlayer.addHitToArray(returnMessage);
+                defendingPlayer.printShotQueue();
+                toClient.flush();
             }
 
+            toClient.writeUTF(endMessage);
+            fromClient.close();
+            socket.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-
-
+    /**
+     * This method is used to introduce a delay in the game.
+     * @author Joachim Forsberg
+     * @param seconds Delaytime in seconds
+     * */
+    private static void wait(int seconds) {
+        try {
+            Thread.sleep(seconds * 1000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
 
