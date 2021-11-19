@@ -32,7 +32,7 @@ public class Client {
             attackingPlayer.addHitToArray(initShot);
             String replyFromServer = "";
             toServer.writeUTF(initShot);
-            String endMessage = "Game Over";
+            String endMessage = "game over";
             int boatSunk = 0;
 
 
@@ -41,6 +41,10 @@ public class Client {
                 wait(WAIT_FOR_SECONDS);
                 replyFromServer = fromServer.readUTF();
                 System.out.println("From Server: " + replyFromServer);
+
+                if (replyFromServer.equals(endMessage)) {
+                    break;
+                }
 
                 String coordinates = attackingPlayer.getIncomingCoordinate(replyFromServer);
                 boolean checkIfShipIsHit = attackingPlayer.checkShipPosition(coordinates);
@@ -72,7 +76,7 @@ public class Client {
                 if (replyFromServer.substring(0, 1).equals("s")) {
                     boatSunk++;
                 }
-                System.out.println("Båtar Client har förlorat: " + boatSunk);
+                System.out.println("Båtar Client har sänkt: " + boatSunk);
                 System.out.println("From Client: " + returnMessage);
                 attackingPlayer.printPlayerMap();
                 attackingPlayer.addHitToArray(returnMessage);
@@ -80,12 +84,11 @@ public class Client {
                 toServer.flush();
             }
             toServer.writeUTF(endMessage);
+            toServer.flush();
             toServer.close();
             socket.close();
 
-        }  catch (IOException e) {
-            e.printStackTrace();
-        }
+        }  catch (IOException e) {}
     }
 
     /**

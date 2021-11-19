@@ -3,6 +3,7 @@ package com.edugrade.battleship;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Locale;
 
 public class Server {
 
@@ -28,7 +29,7 @@ public class Server {
 
             int boatSunk = 0;
             String messageFromClient = "";
-            String endMessage = "Game Over";
+            String endMessage = "game over";
 
 
             while (boatSunk < 10) {
@@ -37,6 +38,10 @@ public class Server {
 
                 messageFromClient = fromClient.readUTF();
                 System.out.println("From Client: " + messageFromClient);
+
+                if (messageFromClient.equals(endMessage)) {
+                    break;
+                }
 
                 String coordinates = defendingPlayer.getIncomingCoordinate(messageFromClient);
                 boolean checkIfShipIsHit = defendingPlayer.checkShipPosition(coordinates);
@@ -68,7 +73,7 @@ public class Server {
                 }
 
                 toClient.writeUTF(returnMessage);
-                System.out.println("Båtar Server har förlorar: " + boatSunk);
+                System.out.println("Båtar Server har sänkt: " + boatSunk);
                 System.out.println("From server: " + returnMessage);
                 defendingPlayer.printPlayerMap();
                 defendingPlayer.addHitToArray(returnMessage);
@@ -77,12 +82,11 @@ public class Server {
             }
 
             toClient.writeUTF(endMessage);
+            toClient.flush();
             fromClient.close();
             socket.close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {}
     }
 
     /**
