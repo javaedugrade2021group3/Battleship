@@ -67,15 +67,15 @@ public class Client {
                 if (replyFromServer.substring(0, 1).equals("h")) {
                     coordinates = attackingPlayer.getIncomingCoordinate(attackingPlayer.getHitFromArray());
                     returnMessage = attackingPlayer.returnString(returnLetter, attackingPlayer.shootCloseToLastHit(coordinates));
+                } else if (replyFromServer.substring(0, 1).equals("s")) {
+                    boatSunk++;
+                    attackingPlayer.clearCloseHitArray();
+                    returnMessage = attackingPlayer.returnString(returnLetter, attackingPlayer.generateShot());
                 } else {
                     returnMessage = attackingPlayer.returnString(returnLetter, attackingPlayer.generateShot());
                 }
 
                 toServer.writeUTF(returnMessage);
-
-                if (replyFromServer.substring(0, 1).equals("s")) {
-                    boatSunk++;
-                }
                 System.out.println("Båtar Client har sänkt: " + boatSunk);
                 System.out.println("From Client: " + returnMessage);
                 attackingPlayer.printPlayerMap();
