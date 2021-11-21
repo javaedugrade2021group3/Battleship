@@ -82,6 +82,30 @@ public class Player {
     }
 
     /**
+     * This method is used inside shotCloseToLastHit method to add the coordinates for the boxes around
+     * the last hit.
+     * @author Joachim Forsberg
+     * @param coordinates The coordinates for the new coordinate around the last hit
+     * */
+    private void generatedShotCoordinate(String coordinates) {
+        int pos = this.shots.indexOf(coordinates);
+        String shot = this.shots.get(pos);
+        this.shots.remove(shot);
+        this.closeHitShots.add(0, shot);
+    }
+
+    /**
+     * This method is used inside shotCloseToLastHit method to return the coordinates for the boxes around
+     * the last hit.
+     * @author Joachim Forsberg
+     * */
+    private String getGeneratedShotCoordinateFromArray() {
+        String shot = this.closeHitShots.get(0);
+        this.closeHitShots.remove(shot);
+        return shot;
+    }
+
+    /**
      * This method is used to get the surrounding coordinates on a hit.
      * Currently, it adds the hits in front of an ArrayList to be picked first.
      *
@@ -103,23 +127,13 @@ public class Player {
             String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
 
             if (this.shots.contains(numPlusOneSameLetter)) {
-                int pos = this.shots.indexOf(numPlusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numPlusOneSameLetter);
             }
             if (this.shots.contains(sameNumLetterPlusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterPlusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterPlusOne);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
 
@@ -128,23 +142,13 @@ public class Player {
             String sameNumLetterMinusOne = number + Character.toString((letters.charAt(letterAtIndex - 1)));
             String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
             if (this.shots.contains(sameNumLetterMinusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterMinusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterMinusOne);
             }
             if (this.shots.contains(numPlusOneSameLetter)) {
-                int pos = this.shots.indexOf(numPlusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numPlusOneSameLetter);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
 
@@ -155,30 +159,16 @@ public class Player {
             String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
 
             if (this.shots.contains(numPlusOneSameLetter)) {
-                int pos = this.shots.indexOf(numPlusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numPlusOneSameLetter);
             }
             if (this.shots.contains(sameNumLetterPlusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterPlusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterPlusOne);
             }
             if (this.shots.contains(sameNumLetterMinusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterMinusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterMinusOne);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
 
@@ -188,30 +178,16 @@ public class Player {
             String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
             String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
             if (this.shots.contains(numPlusOneSameLetter)) {
-                int pos = this.shots.indexOf(numPlusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numPlusOneSameLetter);
             }
             if (this.shots.contains(sameNumLetterPlusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterPlusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterPlusOne);
             }
             if (this.shots.contains(numMinusOneSameLetter)) {
-                int pos = this.shots.indexOf(numMinusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numMinusOneSameLetter);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
 
@@ -220,23 +196,13 @@ public class Player {
             String sameNumLetterPlusOne = number + Character.toString((letters.charAt(letterAtIndex + 1)));
             String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
             if (this.shots.contains(sameNumLetterPlusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterPlusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterPlusOne);
             }
             if (this.shots.contains(numMinusOneSameLetter)) {
-                int pos = this.shots.indexOf(numMinusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numMinusOneSameLetter);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
 
@@ -245,23 +211,13 @@ public class Player {
             String sameNumLetterMinusOne = number + Character.toString((letters.charAt(letterAtIndex - 1)));
             String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
             if (this.shots.contains(sameNumLetterMinusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterMinusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterMinusOne);
             }
             if (this.shots.contains(numMinusOneSameLetter)) {
-                int pos = this.shots.indexOf(numMinusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numMinusOneSameLetter);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
 
@@ -271,30 +227,16 @@ public class Player {
             String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
             String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
             if (this.shots.contains(sameNumLetterMinusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterMinusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterMinusOne);
             }
             if (this.shots.contains(numMinusOneSameLetter)) {
-                int pos = this.shots.indexOf(numMinusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numMinusOneSameLetter);
             }
             if (this.shots.contains(numPlusOneSameLetter)) {
-                int pos = this.shots.indexOf(numPlusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numPlusOneSameLetter);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
         // Mitten nedre kanten
@@ -303,30 +245,16 @@ public class Player {
             String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
             String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
             if (this.shots.contains(sameNumLetterMinusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterMinusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterMinusOne);
             }
             if (this.shots.contains(numMinusOneSameLetter)) {
-                int pos = this.shots.indexOf(numMinusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numMinusOneSameLetter);
             }
             if (this.shots.contains(numPlusOneSameLetter)) {
-                int pos = this.shots.indexOf(numPlusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numPlusOneSameLetter);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
 
@@ -337,37 +265,19 @@ public class Player {
             String numPlusOneSameLetter = (number + 1) + Character.toString((letters.charAt(letterAtIndex)));
             String numMinusOneSameLetter = (number - 1) + Character.toString((letters.charAt(letterAtIndex)));
             if (this.shots.contains(sameNumLetterMinusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterMinusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterMinusOne);
             }
             if (this.shots.contains(sameNumLetterPlusOne)) {
-                int pos = this.shots.indexOf(sameNumLetterPlusOne);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(sameNumLetterPlusOne);
             }
             if (this.shots.contains(numMinusOneSameLetter)) {
-                int pos = this.shots.indexOf(numMinusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numMinusOneSameLetter);
             }
             if (this.shots.contains(numPlusOneSameLetter)) {
-                int pos = this.shots.indexOf(numPlusOneSameLetter);
-                String shot = this.shots.get(pos);
-                this.shots.remove(shot);
-                this.closeHitShots.add(0, shot);
-                //coordsCloseToHit.add(shot);
+                generatedShotCoordinate(numPlusOneSameLetter);
             }
             if (!this.closeHitShots.isEmpty()) {
-                String shot = this.closeHitShots.get(0);
-                this.closeHitShots.remove(shot);
-                return shot;
+                return getGeneratedShotCoordinateFromArray();
             }
         }
         return generateShot();
