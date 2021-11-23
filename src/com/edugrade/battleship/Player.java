@@ -4,8 +4,6 @@ import java.util.*;
 
 public class Player {
 
-    private static Random random = new Random();
-
     private ArrayList<Boats> fleet;
     private GameMap map;
     private ArrayList<String> hits;
@@ -23,20 +21,13 @@ public class Player {
     }
 
     /**
-     * This method prints the player's shot queue (can be deleted before turning in)
-     * @author Joachim Forsberg
-     * */
-    public void printShotQueue() {
-        this.closeHitShots.forEach(e -> System.out.println(e));
-    }
-
-    /**
      * This method clears the content in the closeHitShots Array
      * @author Joachim Forsberg
      * */
     public void clearCloseHitArray() {
         this.closeHitShots.clear();
     }
+
     /**
      * This method returns the Ship ID if the ship get hit.
      * @author Joachim Forsberg
@@ -429,10 +420,6 @@ public class Player {
             this.shots.remove(shot);
             return shot;
         }
-    }
-
-    public void printShots() {
-        this.shots.forEach(e -> System.out.println(e));
     }
 
     /**

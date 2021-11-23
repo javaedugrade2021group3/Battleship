@@ -12,6 +12,7 @@ import java.util.ArrayList;
  * */
 
 public class Boats {
+
     private int shipID;
     private String shipType;
     private int numOfSquares;
@@ -30,13 +31,8 @@ public class Boats {
     /**
      * Getters / Setters
      * */
-
     public ArrayList<String> getLocationOnMap() {
         return new ArrayList<>(locationOnMap);
-    }
-
-    public String getShipType() {
-        return shipType;
     }
 
     public int getShipID() {

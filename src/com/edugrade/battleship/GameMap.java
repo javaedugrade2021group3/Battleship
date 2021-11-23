@@ -14,6 +14,7 @@ import java.util.Arrays;
  * */
 
 public class GameMap {
+
     private String[][] map = new String[11][11];
 
     public GameMap() {}

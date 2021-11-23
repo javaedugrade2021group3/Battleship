@@ -3,7 +3,6 @@ package com.edugrade.battleship;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Locale;
 
 public class Server {
 
@@ -77,7 +76,6 @@ public class Server {
                 System.out.println("From server: " + returnMessage);
                 defendingPlayer.printPlayerMap();
                 defendingPlayer.addHitToArray(returnMessage);
-                defendingPlayer.printShotQueue();
                 toClient.flush();
             }
 

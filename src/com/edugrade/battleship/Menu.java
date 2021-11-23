@@ -28,19 +28,20 @@ public class Menu {
         );
         int startChoice;
         String startOptions = "1: Starta spelet som server\n" +
-                "2: Starta spelet som client\n"+
-                "0: Avsluta";
+                              "2: Starta spelet som client\n"+
+                              "0: Avsluta";
 
         System.out.println(startOptions);
         startChoice = scanner.nextInt();
         switch (startChoice){
             case 1:
-                System.out.println("Server startade");
+                System.out.println("Server startar");
                 Server.startServer();
                 break;
             case 2:
-                System.out.println("Client startade");
-                //Client.startClient(); // Denna är bortkommenterad för att det ligger en main i client för test
+                System.out.println("Client startar");
+                Client.startClient();
+                break;
             case 0:
                 System.out.println("Avslutar programmet..");
                 break;
