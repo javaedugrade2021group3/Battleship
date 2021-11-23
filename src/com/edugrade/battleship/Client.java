@@ -2,15 +2,12 @@ package com.edugrade.battleship;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class Client {
 
     private static Player attackingPlayer = new Player();
 
-    //public static void startClient() {
-    public static void main(String[] args) {
+    public static void startClient() {
 
         final int WAIT_FOR_SECONDS = 2;
         final int PORT = 65001;
@@ -80,7 +77,6 @@ public class Client {
                 System.out.println("From Client: " + returnMessage);
                 attackingPlayer.printPlayerMap();
                 attackingPlayer.addHitToArray(returnMessage);
-                attackingPlayer.printShotQueue();
                 toServer.flush();
             }
             toServer.writeUTF(endMessage);
